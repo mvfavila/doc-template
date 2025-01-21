@@ -21,8 +21,8 @@ def find_single_file(extension):
 def validate_csv(csv_file):
     with open(csv_file, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
-        if "Numero_do_Processo" not in reader.fieldnames:
-            print("Erro: Uma das colunas do arquivo CSV deve ser nomeada como 'Numero_do_Processo'.")
+        if "NUMERO_DO_PROCESSO" not in reader.fieldnames:
+            print("Erro: Uma das colunas do arquivo CSV deve ser nomeada como 'NUMERO_DO_PROCESSO'.")
             sys.exit(1)
         
         rows = list(reader)
@@ -51,6 +51,14 @@ def generate_pdf(docx_file, pdf_file):
 
 # Main logic
 def main():
+    print("Como usar")
+    print("1. Ao iniciar, deve existir exatamente um arquivo .docx e um arquivo .csv no mesmo diretório desse executável.")
+    print("2. O arquivo .docx deve possuir um placeholder para cada coluna do arquivo .csv. ex.: {{NUMERO_DO_PROCESSO}}")
+    print("3. Certifique-se de que existe uma coluna chamada 'NUMERO_DO_PROCESSO' no arquivo .csv.")
+    print("4. Os nomes das colunas do arquivo .csv devem ser exatamente as mesmas dos placeholders do arquivo .docx.")
+    print()
+
+    print("Processando...")
     # Find the .docx template file
     template_file = find_single_file('.docx')
     print(f"Arquivo de template encontrado: {template_file}")
@@ -64,7 +72,7 @@ def main():
 
     # Process each row in the CSV file
     for row in rows:
-        process_number = sanitize_filename(row["Numero_do_Processo"])
+        process_number = sanitize_filename(row["NUMERO_DO_PROCESSO"])
         docx_output = f"{process_number}_{template_file}"
         pdf_output = f"{process_number}_{os.path.splitext(template_file)[0]}.pdf"
 
