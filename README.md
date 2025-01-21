@@ -16,3 +16,11 @@ Automatically fill in .docx templates using .csv input
 # Placeholders
 
 Placeholders are any text within double curly braces, e.g. `{{placeholder}}`. The script will replace these placeholders with the values from the .csv file.
+
+# How to run applciation locally
+
+In the terminal, type:
+
+> python3 -m venv venv
+> source venv/bin/activate
+> python3 main.py
