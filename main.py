@@ -2,7 +2,6 @@ import os
 import sys
 import csv
 import re
-import time
 from docx import Document
 from docx2pdf import convert
 from pathlib import Path
@@ -18,14 +17,21 @@ def find_single_file(extension):
         sys.exit(1)
     return files[0]
 
-# Function to validate the first column in the CSV file
+# Function to validate the first column in the CSV file and check for empty cells
 def validate_csv(csv_file):
     with open(csv_file, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         if "Numero_do_Processo" not in reader.fieldnames:
             print("Erro: Uma das colunas do arquivo CSV deve ser nomeada como 'Numero_do_Processo'.")
             sys.exit(1)
-        return list(reader)
+        
+        rows = list(reader)
+        for row_num, row in enumerate(rows, start=1):
+            for column_name, value in row.items():
+                if value is None or value.strip() == "":
+                    print(f"Erro: A célula na linha {row_num}, coluna '{column_name}' está vazia.")
+                    sys.exit(1)
+        return rows
 
 # Function to sanitize file names
 def sanitize_filename(filename):
