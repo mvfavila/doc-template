@@ -3,7 +3,6 @@ import sys
 import csv
 import re
 import time
-import subprocess
 from docx import Document
 from docx2pdf import convert
 from pathlib import Path
@@ -44,9 +43,6 @@ def generate_pdf(docx_file, pdf_file):
     except Exception as e:
         print(f"Error during PDF generation for {docx_file}: {e}")
 
-def convert_docx_to_pdf(docx_file_path, pdf_file_path):
-    subprocess.run(['/Applications/LibreOffice.app/Contents/MacOS/soffice', '--headless', '--convert-to', 'pdf', docx_file_path, '--outdir', pdf_file_path])
-
 # Main logic
 def main():
     # Find the .docx template file
@@ -79,8 +75,7 @@ def main():
         doc.save(docx_output)
 
         # Generate the corresponding PDF file
-        #generate_pdf(docx_output, pdf_output)
-        convert_docx_to_pdf(docx_output, pdf_output)
+        generate_pdf(docx_output, pdf_output)
         print(f"Arquivos gerados: {docx_output} e {pdf_output}")
 
 if __name__ == "__main__":
