@@ -14,3 +14,8 @@ vendor:
 # run
 run: start
 	./venv/bin/python3 main.py
+
+# release
+# depends on running 'source ./venv/bin/activate' first
+release: start
+	pyinstaller -F main.py
