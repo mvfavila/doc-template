@@ -6,20 +6,24 @@ from docx import Document
 from docx2pdf import convert
 from pathlib import Path
 
+# Get the directory of the executable
+EXECUTABLE_DIR = Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent
+
 # Function to find a single file with a specific extension
 def find_single_file(extension):
-    files = [f for f in os.listdir('.') if f.endswith(extension)]
+    files = [f for f in EXECUTABLE_DIR.iterdir() if f.suffix == extension]
     if len(files) == 0:
-        print(f"Erro: Nenhum arquivo '{extension}' encontrado no diretório.")
+        print(f"Erro: Nenhum arquivo '{extension}' encontrado no diretório {EXECUTABLE_DIR}.")
         sys.exit(1)
     if len(files) > 1:
-        print(f"Erro: Mais de um arquivo '{extension}' encontrado no diretório. Certifique-se de que haja apenas um.")
+        print(f"Erro: Mais de um arquivo '{extension}' encontrado no diretório {EXECUTABLE_DIR}. Certifique-se de que haja apenas um.")
         sys.exit(1)
     return files[0]
 
 # Function to validate the first column in the CSV file and check for empty cells
 def validate_csv(csv_file):
-    with open(csv_file, newline='', encoding='utf-8') as csvfile:
+    csv_path = EXECUTABLE_DIR / csv_file
+    with open(csv_path, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         if "NUMERO_DO_PROCESSO" not in reader.fieldnames:
             print("Erro: Uma das colunas do arquivo CSV deve ser nomeada como 'NUMERO_DO_PROCESSO'.")
@@ -40,10 +44,11 @@ def sanitize_filename(filename):
 # Function to generate PDF from DOCX
 def generate_pdf(docx_file, pdf_file):
     try:
-        convert(docx_file)  # In-place conversion
-        pdf_file = Path(docx_file).with_suffix(".pdf").resolve()
-        if pdf_file.exists():
-            print(f"PDF generated successfully: {pdf_file}")
+        docx_path = EXECUTABLE_DIR / docx_file
+        convert(str(docx_path))  # In-place conversion
+        pdf_path = docx_path.with_suffix(".pdf").resolve()
+        if pdf_path.exists():
+            print(f"PDF generated successfully: {pdf_path}")
         else:
             print(f"PDF was not generated for {docx_file}")
     except Exception as e:
@@ -60,24 +65,24 @@ def main():
 
     print("Processando...")
     # Find the .docx template file
-    template_file = find_single_file('.docx')
-    print(f"Arquivo de template encontrado: {template_file}")
+    template_file_path = find_single_file('.docx')
+    print(f"Arquivo de template encontrado: {template_file_path.name}")
 
     # Find the .csv data file
-    csv_file = find_single_file('.csv')
-    print(f"Arquivo CSV encontrado: {csv_file}")
+    csv_file_path = find_single_file('.csv')
+    print(f"Arquivo CSV encontrado: {csv_file_path.name}")
 
     # Validate and read the CSV file
-    rows = validate_csv(csv_file)
+    rows = validate_csv(csv_file_path)
 
     # Process each row in the CSV file
     for row in rows:
         process_number = sanitize_filename(row["NUMERO_DO_PROCESSO"])
-        docx_output = f"{process_number}_{template_file}"
-        pdf_output = f"{process_number}_{os.path.splitext(template_file)[0]}.pdf"
+        docx_output = EXECUTABLE_DIR / f"{process_number}_{template_file_path.name}"
+        pdf_output = EXECUTABLE_DIR / f"{process_number}_{template_file_path.stem}.pdf"
 
         # Create a copy of the template
-        doc = Document(template_file)
+        doc = Document(template_file_path)
 
         # Replace placeholders with values from the row
         for paragraph in doc.paragraphs:
