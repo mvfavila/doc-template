@@ -24,3 +24,7 @@ In the terminal, type:
 > python3 -m venv venv
 > source venv/bin/activate
 > python3 main.py
+
+# How to build release version
+
+> pyinstaller -F main.py
