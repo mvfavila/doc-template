@@ -1,4 +1,4 @@
-Automatically fill in .docx templates using .csv input
+This script is a command-line tool that takes a .docx template and a .csv file and replaces placeholders in the .docx with values from the .csv. It also generates a PDF for each .docx output. The script is designed to be used with the Brazilian court system's process documentation.
 
 # Usage
 
@@ -28,3 +28,5 @@ In the terminal, type:
 # How to build release version
 
 > pyinstaller -F main.py
+or
+> python -m PyInstaller -F main.py
