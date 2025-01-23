@@ -14,9 +14,11 @@ def find_single_file(extension):
     files = [f for f in EXECUTABLE_DIR.iterdir() if f.suffix == extension]
     if len(files) == 0:
         print(f"Erro: Nenhum arquivo '{extension}' encontrado no diretório {EXECUTABLE_DIR}.")
+        input("Pressione ENTER para fechar")
         sys.exit(1)
     if len(files) > 1:
         print(f"Erro: Mais de um arquivo '{extension}' encontrado no diretório {EXECUTABLE_DIR}. Certifique-se de que haja apenas um.")
+        input("Pressione ENTER para fechar")
         sys.exit(1)
     return files[0]
 
@@ -27,6 +29,7 @@ def validate_csv(csv_file):
         reader = csv.DictReader(csvfile)
         if "NUMERO_DO_PROCESSO" not in reader.fieldnames:
             print("Erro: Uma das colunas do arquivo CSV deve ser nomeada como 'NUMERO_DO_PROCESSO'.")
+            input("Pressione ENTER para fechar")
             sys.exit(1)
         
         rows = list(reader)
@@ -34,6 +37,7 @@ def validate_csv(csv_file):
             for column_name, value in row.items():
                 if value is None or value.strip() == "":
                     print(f"Erro: A célula na linha {row_num}, coluna '{column_name}' está vazia.")
+                    input("Pressione ENTER para fechar")
                     sys.exit(1)
         return rows
 
@@ -48,11 +52,12 @@ def generate_pdf(docx_file, pdf_file):
         convert(str(docx_path))  # In-place conversion
         pdf_path = docx_path.with_suffix(".pdf").resolve()
         if pdf_path.exists():
-            print(f"PDF generated successfully: {pdf_path}")
+            print(f"PDF gerado com sucesso: {pdf_path}")
         else:
-            print(f"PDF was not generated for {docx_file}")
+            print(f"PDF não foi gerado: {docx_file}")
     except Exception as e:
-        print(f"Error during PDF generation for {docx_file}: {e}")
+        print(f"Erro durante geração do PDF {docx_file}: {e}")
+        input("Pressione ENTER para fechar")
 
 # Main logic
 def main():
@@ -96,6 +101,8 @@ def main():
         # Generate the corresponding PDF file
         generate_pdf(docx_output, pdf_output)
         print(f"Arquivos gerados: {docx_output} e {pdf_output}")
+
+    input("Pressione ENTER para fechar")
 
 if __name__ == "__main__":
     main()
