@@ -17,5 +17,7 @@ run: start
 
 # release
 # depends on running 'source ./venv/bin/activate' first
+# or manually do:
+# python -m PyInstaller -F main.py
 release: start
 	pyinstaller -F main.py
